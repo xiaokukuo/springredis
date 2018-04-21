@@ -22,5 +22,9 @@ public class SqlRunnerTest extends MyBaseDataTest {
 		SqlRunner exec = new SqlRunner(connection);
 		connection.close();
 	}
+	
+	public static void main(String[] args) {
+		System.out.println("s");
+	} 
 
 }

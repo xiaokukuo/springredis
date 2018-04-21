@@ -31,5 +31,5 @@ public class LoggerFactory {
   public static Logger getLogger(String logger) {
     return new Logger(LogFactory.getLog(logger));
   }
-
+  
 }
