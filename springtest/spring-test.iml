@@ -38,6 +38,9 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-jms:5.0.8.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-messaging:5.0.8.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-test:5.0.8.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: javax.servlet:jstl:1.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet.jsp:javax.servlet.jsp-api:2.3.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:3.0-alpha-1" level="project" />
     <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.31" level="project" />
   </component>
 </module>
