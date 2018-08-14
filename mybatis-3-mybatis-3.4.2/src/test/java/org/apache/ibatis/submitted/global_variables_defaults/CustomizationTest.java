@@ -1,17 +1,17 @@
 /**
- *    Copyright ${license.git.copyrightYears} the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2010-2018 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.submitted.global_variables_defaults;
 
@@ -38,81 +38,81 @@ import java.util.Properties;
 
 public class CustomizationTest {
 
-  @Test
-  public void applyDefaultValueWhenCustomizeDefaultValueSeparator() throws IOException {
+    @Test
+    public void applyDefaultValueWhenCustomizeDefaultValueSeparator() throws IOException {
 
-    Properties props = new Properties();
-    props.setProperty(PropertyParser.KEY_ENABLE_DEFAULT_VALUE, "true");
-    props.setProperty(PropertyParser.KEY_DEFAULT_VALUE_SEPARATOR, "?:");
+        Properties props = new Properties();
+        props.setProperty(PropertyParser.KEY_ENABLE_DEFAULT_VALUE, "true");
+        props.setProperty(PropertyParser.KEY_DEFAULT_VALUE_SEPARATOR, "?:");
 
-    Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/global_variables_defaults/mybatis-config-custom-separator.xml");
-    SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(reader, props);
-    Configuration configuration = factory.getConfiguration();
-    configuration.addMapper(CustomDefaultValueSeparatorMapper.class);
+        Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/global_variables_defaults/mybatis-config-custom-separator.xml");
+        SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(reader, props);
+        Configuration configuration = factory.getConfiguration();
+        configuration.addMapper(CustomDefaultValueSeparatorMapper.class);
 
-    SupportClasses.CustomCache cache = SupportClasses.Utils.unwrap(configuration.getCache(CustomDefaultValueSeparatorMapper.class.getName()));
+        SupportClasses.CustomCache cache = SupportClasses.Utils.unwrap(configuration.getCache(CustomDefaultValueSeparatorMapper.class.getName()));
 
-    Assert.assertThat(configuration.getJdbcTypeForNull(), Is.is(JdbcType.NULL));
-    Assert.assertThat(((UnpooledDataSource) configuration.getEnvironment().getDataSource()).getUrl(),
-        Is.is("jdbc:hsqldb:mem:global_variables_defaults"));
-    Assert.assertThat(configuration.getDatabaseId(), Is.is("hsql"));
-    Assert.assertThat(((SupportClasses.CustomObjectFactory) configuration.getObjectFactory()).getProperties().getProperty("name"),
-        Is.is("default"));
-    Assert.assertThat(cache.getName(), Is.is("default"));
+        Assert.assertThat(configuration.getJdbcTypeForNull(), Is.is(JdbcType.NULL));
+        Assert.assertThat(((UnpooledDataSource) configuration.getEnvironment().getDataSource()).getUrl(),
+                Is.is("jdbc:hsqldb:mem:global_variables_defaults"));
+        Assert.assertThat(configuration.getDatabaseId(), Is.is("hsql"));
+        Assert.assertThat(((SupportClasses.CustomObjectFactory) configuration.getObjectFactory()).getProperties().getProperty("name"),
+                Is.is("default"));
+        Assert.assertThat(cache.getName(), Is.is("default"));
 
-    SqlSession sqlSession = factory.openSession();
-    try {
-      CustomDefaultValueSeparatorMapper mapper = sqlSession.getMapper(CustomDefaultValueSeparatorMapper.class);
-      Assert.assertThat(mapper.selectValue(null), Is.is("default"));
-    } finally {
-      sqlSession.close();
+        SqlSession sqlSession = factory.openSession();
+        try {
+            CustomDefaultValueSeparatorMapper mapper = sqlSession.getMapper(CustomDefaultValueSeparatorMapper.class);
+            Assert.assertThat(mapper.selectValue(null), Is.is("default"));
+        } finally {
+            sqlSession.close();
+        }
+
     }
 
-  }
+    @Test
+    public void applyPropertyValueWhenCustomizeDefaultValueSeparator() throws IOException {
 
-  @Test
-  public void applyPropertyValueWhenCustomizeDefaultValueSeparator() throws IOException {
+        Properties props = new Properties();
+        props.setProperty(PropertyParser.KEY_ENABLE_DEFAULT_VALUE, "true");
+        props.setProperty(PropertyParser.KEY_DEFAULT_VALUE_SEPARATOR, "?:");
+        props.setProperty("settings:jdbcTypeForNull", JdbcType.CHAR.name());
+        props.setProperty("db:name", "global_variables_defaults_custom");
+        props.setProperty("productName:hsql", "Hsql");
+        props.setProperty("objectFactory:name", "customObjectFactory");
+        props.setProperty("cache:name", "customCache");
 
-    Properties props = new Properties();
-    props.setProperty(PropertyParser.KEY_ENABLE_DEFAULT_VALUE, "true");
-    props.setProperty(PropertyParser.KEY_DEFAULT_VALUE_SEPARATOR, "?:");
-    props.setProperty("settings:jdbcTypeForNull", JdbcType.CHAR.name());
-    props.setProperty("db:name", "global_variables_defaults_custom");
-    props.setProperty("productName:hsql", "Hsql");
-    props.setProperty("objectFactory:name", "customObjectFactory");
-    props.setProperty("cache:name", "customCache");
+        Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/global_variables_defaults/mybatis-config-custom-separator.xml");
+        SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(reader, props);
+        Configuration configuration = factory.getConfiguration();
+        configuration.addMapper(CustomDefaultValueSeparatorMapper.class);
 
-    Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/global_variables_defaults/mybatis-config-custom-separator.xml");
-    SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(reader, props);
-    Configuration configuration = factory.getConfiguration();
-    configuration.addMapper(CustomDefaultValueSeparatorMapper.class);
+        SupportClasses.CustomCache cache = SupportClasses.Utils.unwrap(configuration.getCache(CustomDefaultValueSeparatorMapper.class.getName()));
 
-    SupportClasses.CustomCache cache = SupportClasses.Utils.unwrap(configuration.getCache(CustomDefaultValueSeparatorMapper.class.getName()));
+        Assert.assertThat(configuration.getJdbcTypeForNull(), Is.is(JdbcType.CHAR));
+        Assert.assertThat(((UnpooledDataSource) configuration.getEnvironment().getDataSource()).getUrl(),
+                Is.is("jdbc:hsqldb:mem:global_variables_defaults_custom"));
+        Assert.assertThat(configuration.getDatabaseId(), IsNull.nullValue());
+        Assert.assertThat(((SupportClasses.CustomObjectFactory) configuration.getObjectFactory()).getProperties().getProperty("name"),
+                Is.is("customObjectFactory"));
+        Assert.assertThat(cache.getName(), Is.is("customCache"));
 
-    Assert.assertThat(configuration.getJdbcTypeForNull(), Is.is(JdbcType.CHAR));
-    Assert.assertThat(((UnpooledDataSource) configuration.getEnvironment().getDataSource()).getUrl(),
-        Is.is("jdbc:hsqldb:mem:global_variables_defaults_custom"));
-    Assert.assertThat(configuration.getDatabaseId(), IsNull.nullValue());
-    Assert.assertThat(((SupportClasses.CustomObjectFactory) configuration.getObjectFactory()).getProperties().getProperty("name"),
-        Is.is("customObjectFactory"));
-    Assert.assertThat(cache.getName(), Is.is("customCache"));
+        SqlSession sqlSession = factory.openSession();
+        try {
+            CustomDefaultValueSeparatorMapper mapper = sqlSession.getMapper(CustomDefaultValueSeparatorMapper.class);
+            Assert.assertThat(mapper.selectValue("3333"), Is.is("3333"));
+        } finally {
+            sqlSession.close();
+        }
 
-    SqlSession sqlSession = factory.openSession();
-    try {
-      CustomDefaultValueSeparatorMapper mapper = sqlSession.getMapper(CustomDefaultValueSeparatorMapper.class);
-      Assert.assertThat(mapper.selectValue("3333"), Is.is("3333"));
-    } finally {
-      sqlSession.close();
     }
 
-  }
-
-  @CacheNamespace(implementation = SupportClasses.CustomCache.class, properties = {
-      @Property(name = "name", value = "${cache:name?:default}")
-  })
-  private interface CustomDefaultValueSeparatorMapper {
-    @Select("SELECT '${val != null ? val : 'default'}' FROM INFORMATION_SCHEMA.SYSTEM_USERS")
-    String selectValue(@Param("val") String val);
-  }
+    @CacheNamespace(implementation = SupportClasses.CustomCache.class, properties = {
+            @Property(name = "name", value = "${cache:name?:default}")
+    })
+    private interface CustomDefaultValueSeparatorMapper {
+        @Select("SELECT '${val != null ? val : 'default'}' FROM INFORMATION_SCHEMA.SYSTEM_USERS")
+        String selectValue(@Param("val") String val);
+    }
 
 }

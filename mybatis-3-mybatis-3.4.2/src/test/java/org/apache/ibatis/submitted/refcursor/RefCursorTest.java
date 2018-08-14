@@ -1,28 +1,19 @@
 /**
- *    Copyright ${license.git.copyrightYears} the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2010-2018 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.submitted.refcursor;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -31,15 +22,24 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 /*
  * This class contains tests for refcursors.  The tests require a
  * local install of PostgreSQL and cannot be run as a part of the normal
- * MyBatis build unless PostreSQL is setup on the build machine as 
+ * MyBatis build unless PostreSQL is setup on the build machine as
  * described in setupdb.txt
- * 
+ *
  * If PostgreSQL is setup as described in setupdb.txt, then remove
  * the @Ignore annotation to enable the tests.
- * 
+ *
  * @author Jeff Butler
  *
  */
@@ -56,7 +56,7 @@ public class RefCursorTest {
             Map<String, Object> parameter = new HashMap<String, Object>();
             parameter.put("orderId", 1);
             mapper.getOrder1(parameter);
-            
+
             assertNotNull(parameter.get("order"));
             List<Order> orders = (List<Order>) parameter.get("order");
             assertEquals(1, orders.size());
@@ -78,7 +78,7 @@ public class RefCursorTest {
             Map<String, Object> parameter = new HashMap<String, Object>();
             parameter.put("orderId", 1);
             mapper.getOrder2(parameter);
-            
+
             assertNotNull(parameter.get("order"));
             List<Order> orders = (List<Order>) parameter.get("order");
             assertEquals(1, orders.size());
