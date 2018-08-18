@@ -36,6 +36,7 @@
             </bean>
         </mvc:message-converters>
     </mvc:annotation-driven>
+
     <bean id="fastJsonConfig" class="com.alibaba.fastjson.support.config.FastJsonConfig">
         <property name="charset" value="UTF-8" />
         <property name="features">
@@ -44,5 +45,16 @@
             </list>
         </property>
     </bean>
+
+    <!-- 使用默认的Servlet来响应静态文件 -->
+    <mvc:default-servlet-handler/>
+    <!-- 视图解析器  -->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- 前缀 -->
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <!-- 后缀 -->
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
 
 </beans>

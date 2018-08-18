@@ -24,19 +24,26 @@
     <bean id="druidDataSource" class="com.alibaba.druid.pool.DruidDataSource"
           destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-        <property name="url" value="jdbc:mysql://localhost:3306/test" />
+        <property name="url" value="jdbc:mysql://localhost:3306/sport-bet?useUnicode=true&characterEncoding=utf-8&useSSL=false" />
         <property name="username" value="root" />
         <property name="password" value="root" />
         <property name="maxActive" value="10" />
         <property name="minIdle" value="5" />
     </bean>
 
-    <!-- 让spring管理sqlsessionfactory 使用mybatis和spring整合包中的 -->
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <!-- 数据库连接池 -->
-        <property name="dataSource" ref="druidDataSource" />
-        <!-- 加载mybatis的全局配置文件 -->
-        <property name="configLocation" value="classpath:/config/mybatis-config.xml" />
+    <!--3 会话工厂bean sqlSessionFactoryBean -->
+    <bean id="sqlSessionFactoryid" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 数据源 -->
+        <property name="dataSource" ref="druidDataSource"></property>
+
+        <property name="configLocation" value="classpath*:config/mybatis-config.xml"></property>
+
+    </bean>
+
+    <!--4 自动扫描对象关系映射 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 指定要自动扫描接口的基础包，实现接口 -->
+        <property name="sqlSessionFactoryBeanName" ref="sqlSessionFactoryid" />
     </bean>
 
     <!-- 事务管理器 -->
