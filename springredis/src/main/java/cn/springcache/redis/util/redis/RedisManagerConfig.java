@@ -20,7 +20,6 @@ public class RedisManagerConfig {
 	@Bean(name="redisCacheManager")
 	public RedisCacheManager createCacheManager() {
 		//return RedisCacheManager.create(connectionFactory); //默认管理器
-        RedisCacheManager.create(connectionFactory);
 		RedisCacheManagerBuilder builder = RedisCacheManagerBuilder.fromConnectionFactory(connectionFactory);
 		Set<String> cacheNames = new HashSet<String>() {{  
 	        add("batch");
