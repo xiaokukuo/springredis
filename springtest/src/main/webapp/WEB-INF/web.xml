@@ -13,10 +13,21 @@
     <servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+<<<<<<< HEAD
+=======
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:config/dispatcher-servlet.xml</param-value>
+        </init-param>
+>>>>>>> origin/master
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
+<<<<<<< HEAD
         <url-pattern>*.form</url-pattern>
+=======
+        <url-pattern>/</url-pattern>
+>>>>>>> origin/master
     </servlet-mapping>
 </web-app>

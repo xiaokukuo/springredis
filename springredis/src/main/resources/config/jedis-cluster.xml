@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/cache
+                        http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+
+    <cache:annotation-driven cache-manager="cacheManager1"/>
+
+    <!-- redis连接池 -->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="300" />
+        <property name="maxWaitMillis" value="3000" />
+        <property name="testOnBorrow" value="true" />
+    </bean>
+
+    <!-- 连接工厂 -->
+    <bean id="jedisConnectionFactory"
+          class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+
+        <constructor-arg name="poolConfig" ref="poolConfig"/>
+        <property name="port" value="6379"/>
+        <property name="hostName" value="123.57.58.242"/>
+        <property name="password" value="szrredis" />
+        <property name="timeout" value="3000"/>
+    </bean>
+
+    <!-- redis模板 -->
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="jedisConnectionFactory" />
+    </bean>
+
+    <bean id="cacheManager1" class="org.springframework.cache.support.SimpleCacheManager">
+        <property name="caches">
+            <set>
+                <!-- 这里可以配置多个redis -->
+                <bean class="cn.springcache.redis.util.redis.RedisCache">
+                    <property name="redisTemplate" ref="redisTemplate" />
+                    <property name="name" value="batch"/>
+                    <!-- name对应的名称要在类或方法的注解中使用 -->
+                </bean>
+
+            </set>
+        </property>
+
+    </bean>
+
+</beans>

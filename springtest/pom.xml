@@ -7,6 +7,7 @@
     <groupId>com.springmybatis</groupId>
     <artifactId>spring-test</artifactId>
     <version>1.0</version>
+    <packaging>war</packaging>
 
     <name>spring-test</name>
     <!-- FIXME change it to the project's website -->
@@ -30,10 +31,18 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.4.2.01</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>
-            <version>2.0.0.res</version>
+            <version>2.0.0</version>
         </dependency>
 
 
@@ -149,7 +158,81 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>${mysql.version}</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.1.10</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.47</version>
+        </dependency>
+
     </dependencies>
 
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
+                <configuration>
+                    <excludeScope>provided</excludeScope>
+                    <excludeTransitive>false</excludeTransitive>
+                    <includeScope>compile</includeScope>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <goal>clean</goal>
+                    <goal>compile</goal>
+                    <goal>package</goal>
+                    <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
+                    <webXml>${basedir}/src/main/webapp/WEB-INF/web.xml</webXml>
+                    <resourceEncoding>UTF-8</resourceEncoding>
+                    <warSourceIncludes>
+                        resources/**,
+                        WEB-INF/**,
+                        META-INF/**
+                    </warSourceIncludes>
+                    <warName>${project.build.finalName}</warName>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
