@@ -16,8 +16,6 @@ public class RedisCache implements Cache {
 
     private RedisTemplate<String, Object> redisTemplate;
 
-    private List<String> cacheNames;
-
     private String name;
 
 
@@ -123,14 +121,6 @@ public class RedisCache implements Cache {
 
     public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
-    }
-
-    public List<String> getCacheNames() {
-        return cacheNames;
-    }
-
-    public void setCacheNames(List<String> cacheNames) {
-        this.cacheNames = cacheNames;
     }
 
     public void setName(String name) {
