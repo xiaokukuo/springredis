@@ -43,8 +43,14 @@ public class RedisManagerConfig {
         return builder.build(); //设置多个缓存;
     }
 
+    /**
+     * JedisConnectionFactory RedisConnectionFactory
+     * @param jedisConnectionFactory
+     * @param fastJson2JsonRedisSerializer
+     * @return
+     */
     @Bean(name="redisCacheManager")
-    public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory,
+    public RedisCacheManager cacheManager(JedisConnectionFactory jedisConnectionFactory,
                                           RedisSerializer fastJson2JsonRedisSerializer) {
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(this.timeToLive)
@@ -57,7 +63,7 @@ public class RedisManagerConfig {
             add("user");
         }};
 
-        RedisCacheManager redisCacheManager = RedisCacheManager.builder(connectionFactory)
+        RedisCacheManager redisCacheManager = RedisCacheManager.builder(jedisConnectionFactory)
                 .cacheDefaults(config)
                 .transactionAware()
                 //.initialCacheNames(cacheNames)

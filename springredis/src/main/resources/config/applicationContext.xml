@@ -24,7 +24,7 @@
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Component"/>
     </context:component-scan>
 
-    <import resource="spring-data-redis-defaul.xml"/>
+    <import resource="spring-data-redis.xml"/>
     <!-- 启用缓存注解功能 -->
     <cache:annotation-driven cache-manager="redisCacheManager" />
 
