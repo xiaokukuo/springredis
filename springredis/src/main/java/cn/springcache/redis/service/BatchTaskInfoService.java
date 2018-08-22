@@ -16,7 +16,8 @@ public class BatchTaskInfoService {
     @Autowired
     private BatchTaskInfoMapper batchTaskInfoMapper;
 
-    @Cacheable(value="batch",key="#root.targetClass.simpleName+'all'")
+    //#root.targetClass.simpleName
+    @Cacheable(value="batch",key="#root.targetClass.typeName+':'+#root.method.name")
     public List<BatchTaskInfo> findAll(){
         System.err.println("没有走缓存");
        return  batchTaskInfoMapper.selectAll();

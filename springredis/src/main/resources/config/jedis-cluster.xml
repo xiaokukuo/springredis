@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
@@ -14,14 +15,9 @@
 
     <!-- 连接工厂 -->
     <bean id="jedisConnectionFactory"
-          class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+          class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+          p:host-name="123.57.58.242" p:port="6379" p:password="szrredis" p:use-pool="true" p:pool-config-ref="poolConfig" />
 
-        <constructor-arg name="poolConfig" ref="poolConfig"/>
-        <property name="port" value="6379"/>
-        <property name="hostName" value="123.57.58.242"/>
-        <property name="password" value="szrredis" />
-        <property name="timeout" value="3000"/>
-    </bean>
 
     <!-- redis模板 -->
     <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">

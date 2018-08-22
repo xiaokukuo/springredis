@@ -17,17 +17,17 @@
             http://www.springframework.org/schema/cache/spring-cache.xsd"
        default-lazy-init="false">
 
-    <!-- 启用缓存注解功能 -->
-    <cache:annotation-driven cache-manager="redisCacheManager" />
-
-    <import resource="redis.xml"/>
-
 
     <context:component-scan base-package="cn.springcache">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Service"/>
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
-        <context:include-filter type="annotation" expression="org.springframework.stereotype."/>
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Component"/>
     </context:component-scan>
+
+    <import resource="spring-data-redis-defaul.xml"/>
+    <!-- 启用缓存注解功能 -->
+    <cache:annotation-driven cache-manager="redisCacheManager" />
+
 
     <bean id="druidDataSource" class="com.alibaba.druid.pool.DruidDataSource"
           destroy-method="close">
