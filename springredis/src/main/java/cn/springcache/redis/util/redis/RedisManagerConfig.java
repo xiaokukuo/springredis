@@ -2,46 +2,75 @@ package cn.springcache.redis.util.redis;
 
 import cn.springcache.redis.util.serializer.FastJson2JsonRedisSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.cache.RedisCacheManager.RedisCacheManagerBuilder;
+import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.*;
 
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
 
-//@Configuration
+/**
+ * spring data redis 2.0及以上版本
+ */
+@Configuration
 public class RedisManagerConfig {
 
-	@Autowired
-	private RedisConnectionFactory connectionFactory;
-
-
-
-   /* public JedisConnectionFactory jedisConnectionFactory(RedisStandaloneConfiguration standaloneConfig) {
-        return new JedisConnectionFactory(standaloneConfig);
+    private Duration timeToLive = Duration.ZERO;
+    public void setTimeToLive(Duration timeToLive) {
+        this.timeToLive = timeToLive;
     }
-*/
+
+    @Bean(name="defaultRedisManager")
+    public RedisCacheManager createCacheManager(JedisConnectionFactory jedisConnectionFactory) {
+        //return RedisCacheManager.create(connectionFactory); //默认管理器
+        RedisCacheManager.RedisCacheManagerBuilder builder = RedisCacheManager
+                .RedisCacheManagerBuilder.fromConnectionFactory(jedisConnectionFactory);
+        Set<String> cacheNames = new HashSet<String>() {{
+            add("batch");
+        }};
+
+        builder.initialCacheNames(cacheNames);
+
+        return builder.build(); //设置多个缓存;
+    }
+
     @Bean(name="redisCacheManager")
-	public RedisCacheManager createCacheManager() {
-		//return RedisCacheManager.create(connectionFactory); //默认管理器
-		RedisCacheManagerBuilder builder = RedisCacheManagerBuilder.fromConnectionFactory(connectionFactory);
-		Set<String> cacheNames = new HashSet<String>() {{  
-	        add("batch");
-	    }};
+    public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory,
+                                          RedisSerializer fastJson2JsonRedisSerializer) {
+        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(this.timeToLive)
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(keySerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(fastJson2JsonRedisSerializer))
+                .disableCachingNullValues();
 
-		builder.initialCacheNames(cacheNames);
+        Set<String> cacheNames = new HashSet<String>() {{
+            add("batch");
+            add("user");
+        }};
 
-		return builder.build(); //设置多个缓存;
-	}
+        RedisCacheManager redisCacheManager = RedisCacheManager.builder(connectionFactory)
+                .cacheDefaults(config)
+                .transactionAware()
+                //.initialCacheNames(cacheNames)
+                .build();
+
+        return redisCacheManager;
+    }
+
 	@Bean
 	public RedisSerializer fastJson2JsonRedisSerializer() {
 		return new FastJson2JsonRedisSerializer(Object.class);
 	}
 
-	/*
 
 
 	@Bean
@@ -51,10 +80,11 @@ public class RedisManagerConfig {
 
 	@Bean
 	public RedisTemplate<String, Object> redisTemplate(RedisSerializer fastJson2JsonRedisSerializer,
-													   RedisSerializer StringRedisSerializer) {
+                                                       RedisSerializer StringRedisSerializer,
+                                                       JedisConnectionFactory jedisConnectionFactory) {
 
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-		redisTemplate.setConnectionFactory(connectionFactory);
+		redisTemplate.setConnectionFactory(jedisConnectionFactory);
 
 		// 全局开启AutoType，不建议使用
 		// ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
@@ -71,7 +101,15 @@ public class RedisManagerConfig {
 		redisTemplate.afterPropertiesSet();
 
 		return redisTemplate;
-	}*/
+	}
 
+
+    private RedisSerializer<String> keySerializer() {
+        return new StringRedisSerializer();
+    }
+
+    private RedisSerializer<Object> valueSerializer() {
+        return new GenericJackson2JsonRedisSerializer();
+    }
 
 }

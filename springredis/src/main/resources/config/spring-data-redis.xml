@@ -3,64 +3,35 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:c="http://www.springframework.org/schema/c"
-       xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:cache="http://www.springframework.org/schema/cache"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-  		http://www.springframework.org/schema/beans/spring-beans.xsd
-  		http://www.springframework.org/schema/util
-  		http://www.springframework.org/schema/util/spring-util.xsd
-        http://www.springframework.org/schema/cache
-        http://www.springframework.org/schema/cache/spring-cache.xsd">
+  		http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-
-    <!-- 单个redis配置 -->
-    <!-- redis连接池的配置 -->
+    <!--设置jedisPool链接池的配置-->
     <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
-        <property name="maxIdle" value="300" />
-        <property name="maxWaitMillis" value="3000" />
-        <property name="testOnBorrow" value="true" />
+        <property name="maxTotal" value="100"/>
+        <property name="maxIdle" value="20"/>
+        <property name="maxWaitMillis" value="10000"/>
+        <property name="testOnBorrow" value="true"/>
+        <property name="testOnReturn" value="true"/>
     </bean>
 
-
-    <!-- 以下是spring-data-redis配置方式 -->
-    <bean id="jedisConnectionFactory"
-          class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
-          p:host-name="123.57.58.242" p:port="6379" p:password="szrredis"
-          p:use-pool="true" p:pool-config-ref="jedisPoolConfig" />
-
-    <!--  SDR默认采用的序列化策略有两种，一种是String的序列化策略，一种是JDK的序列化策略。
-        StringRedisTemplate默认采用的是String的序列化策略，保存的key和value都是采用此策略序列化保存的。
-        RedisTemplate默认采用的是JDK的序列化策略，保存的key和value都是采用此策略序列化保存的。
-        就是因为序列化策略的不同，即使是同一个key用不同的Template去序列化，结果是不同的。所以根据key去删除数据的时候就出现了删除失败的问题。
-     -->
-    <!-- redis 序列化策略 ，通常情况下key值采用String序列化策略， -->
-    <!-- 如果不指定序列化策略，StringRedisTemplate的key和value都将采用String序列化策略； -->
-    <!-- 但是RedisTemplate的key和value都将采用JDK序列化 这样就会出现采用不同template保存的数据不能用同一个template删除的问题 -->
-    <!--手动设置 key  与 value的序列化方式-->
-    <bean id="keySerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
-    <bean id="valueSerializer" class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer">
-
+    <!--redis链接密码-->
+    <bean id="redisPassword" class="org.springframework.data.redis.connection.RedisPassword">
+        <constructor-arg name="thePassword" value="szrredis"></constructor-arg>
     </bean>
 
-    <!--配置jedis模板  -->
-    <bean id = "redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
-        <property name="connectionFactory" ref="jedisConnectionFactory" />
-        <property name="keySerializer" ref="keySerializer" />
-        <property name="valueSerializer" ref="valueSerializer" />
-        <property name="hashKeySerializer" ref="keySerializer" />
-        <property name="hashValueSerializer" ref="valueSerializer" />
+    <!--spring-data-redis2.0以上的配置-->
+    <bean id="redisStandaloneConfiguration"
+          class="org.springframework.data.redis.connection.RedisStandaloneConfiguration">
+        <property name="hostName" value="123.57.58.242"/>
+        <property name="port" value="6379"/>
+        <property name="password" ref="redisPassword" />
+        <property name="database" value="3"/>
     </bean>
 
-    <!--也可以StringRedisTemplate  专注于String的操作  -->
-    <bean id="stringRedisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">
-        <!--<property name="connectionFactory" ref="jedisConnectionFactory"></property>-->
-        <!--在StringRedisTemplate与redisTemplate不同,可以直接造构造器中传入ConnectionFactory-->
-        <constructor-arg name="connectionFactory" ref="jedisConnectionFactory"></constructor-arg>
-        <property name="keySerializer" ref="keySerializer" />
-        <property name="valueSerializer" ref="valueSerializer" />
-        <property name="hashKeySerializer" ref="keySerializer" />
-        <property name="hashValueSerializer" ref="valueSerializer" />
-
+    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+          p:poolConfig-ref="jedisPoolConfig">
+        <constructor-arg name="standaloneConfig" ref="redisStandaloneConfiguration"/>
     </bean>
 
 
